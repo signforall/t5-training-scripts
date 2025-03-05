@@ -1,0 +1,13 @@
+ModelArguments:
+  base_model_name: T5 # options are T5, T5-v1, mT5
+  t5_model_name: "google-t5/t5-base"
+  checkpoint_path: "/eph/nvme0/azureml/cr/j/2703db9dc808440b9a240f60e17d9f42/exe/wd/SNL/last_model"
+  feature_dim: 208
+  hidden_dim: 768
+  
+DatasetArguments:
+  test_dataset_path: '/eph/nvme0/azureml/cr/j/2703db9dc808440b9a240f60e17d9f42/exe/wd/SSL.keypoints.train_signers_train_sentences.0.h5'
+  test_labels_dataset_path: '/eph/nvme0/azureml/cr/j/2703db9dc808440b9a240f60e17d9f42/exe/wd/SSL.keypoints.train_signers_train_sentences.json'
+
+EvaluationArguments:
+  results_save_path: "results"

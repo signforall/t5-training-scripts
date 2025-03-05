@@ -1,0 +1,8 @@
+transformers==4.27.2
+h5py
+sentencepiece
+accelerate
+wandb
+evaluate
+sacrebleu
+numpy==1.26.4

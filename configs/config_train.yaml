@@ -1,0 +1,32 @@
+ModelArguments:
+  base_model_name: T5 # options are T5, T5-v1, mT5
+  base_model_hf: "google-t5/t5-base"
+  resume: false
+  resume_checkpoint: ""
+  feature_dim: 208
+  hidden_dim: 768
+
+TrainigArguments:
+  seed: 42
+  batch_size: 16
+  gradient_accumulation_steps: 1
+  learning_rate: 0.001
+  output_folder: output
+  epochs: 100
+  weight_decay: 0.01
+  per_device_eval_batch_size: 4
+  eval_accumulation_steps: 2
+  fp16: False
+
+  
+DatasetArguments:
+  train_dataset_path: 'SSL.keypoints.train_signers_train_sentences.0.h5'
+  valid_dataset_path: 'SSL.keypoints.valid_signers_valid_sentences.0.h5'
+  train_labels_dataset_path: 'SSL.keypoints.train_signers_train_sentences.json'
+  valid_labels_dataset_path: 'SSL.keypoints.valid_signers_valid_sentences.json'
+  max_sequence_length: 600
+  language: English
+
+WandbArguments:
+  wandb_project: SNL
+  wandb_api_key: wandb_api_key
