@@ -7,3 +7,4 @@ evaluate
 sacrebleu
 pandas
 numpy==1.26.4
+protobuf==3.20
