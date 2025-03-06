@@ -1,6 +1,6 @@
 ModelArguments:
   base_model_name: T5 # options are T5, T5-v1, mT5
-  base_model_hf: "google-t5/t5-base"
+  base_model_hf: "google-t5/t5-base" # "google-t5/t5-base", "google/mt5-base",  "google/t5-v1_1-base"
   resume: false
   resume_checkpoint: ""
   feature_dim: 208
