@@ -23,7 +23,7 @@ def main():
     set_seed(cfg.TrainigArguments.seed)
 
     # Set up experiment name
-    EXP_NAME = f"SNL_Model-name_{cfg.ModelArguments.base_model_name}-Weights_{"BASE" if not cfg.ModelArguments.resume else "SNL_WEIGHTS"}-Language_{cfg.DatasetArguments.language}-seed_{cfg.TrainigArguments.seed}"
+    EXP_NAME = f"SNL_Model-name_{cfg.ModelArguments.base_model_name}-Weights_{'BASE' if not cfg.ModelArguments.resume else 'SNL_WEIGHTS'}-Language_{cfg.DatasetArguments.language}-seed_{cfg.TrainigArguments.seed}"
 
     # Set environment variables and Wandb
     os.environ["WANDB_API_KEY"] = cfg.WandbArguments.wandb_api_key
