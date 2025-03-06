@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 ### Fine-tuning with YouTubeASL Checkpoint
 If you want to fine-tune using the YouTubeASL checkpoint:
-1. Download the checkpoint from [link_here].
+1. Download the checkpoint from [[here](https://drive.google.com/drive/folders/1TM1BrA6v4bJTd0rzSHFUp0yH-FmXO9nK?usp=drive_link)].
 2. Set `resume` to `true` in `config_train.yaml`.
 3. Specify the checkpoint path in `resume_checkpoint`.
 
