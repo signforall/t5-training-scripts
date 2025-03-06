@@ -1,8 +1,7 @@
 import os
 import torch
-import numpy as np
-import random
-from transformers import TrainingArguments, Trainer, AutoTokenizer
+import pandas as pd
+from transformers import AutoTokenizer
 from modules.dataset import VideoDataset
 from modules.model import SNLTraslationModel
 from modules.config_loader import load_config
@@ -27,9 +26,10 @@ def load_trained_model(cfg):
     return model, tokenizer
 
 def collate_fn(batch):
-    features = torch.stack([item["features"] for item in batch]).cuda()
-    attention_mask = torch.stack([item["attention_mask"] for item in batch])[:, :, 0].cuda()
-    return {"features": features, "attention_mask": attention_mask, "labels":[item["labels"] for item in batch]}
+    features = torch.stack([item["features"] for item in batch]).to("cuda" if torch.cuda.is_available() else "cpu")
+    attention_mask = torch.stack([item["attention_mask"] for item in batch])[:, :, 0].to("cuda" if torch.cuda.is_available() else "cpu")
+    return {"features": features, "attention_mask": attention_mask,\
+             "labels": [item["labels"] for item in batch], "keys": [item["key"] for item in batch]}
 
 def main():
     # Load configuration
@@ -42,58 +42,74 @@ def main():
     sacrebleu = evaluate.load('sacrebleu')
 
     # Load datasets
+    if not os.path.exists(cfg.DatasetArguments.test_labels_dataset_path):
+        with_labels = False
+    else:
+        with_labels = True
+
     test_dataset = VideoDataset(h5_file_path=cfg.DatasetArguments.test_dataset_path, \
                                 label_file_path=cfg.DatasetArguments.test_labels_dataset_path, \
                                 tokenizer=tokenizer, \
-                                test_set=True)
+                                test_set=True, \
+                                with_labels=with_labels)
 
     # Create DataLoader for batching
-    batch_size = 16  # Adjust batch size based on available GPU memory
+    batch_size = cfg.EvaluationArguments.batch_size  # Adjust batch size based on available GPU memory
     test_loader = DataLoader(test_dataset, batch_size=batch_size, collate_fn=collate_fn, shuffle=False)
 
+    keys = []
     predictions = []
-    references = []
+    if with_labels:
+        references = []
     
     os.makedirs(cfg.EvaluationArguments.results_save_path, exist_ok=True)
-    prediction_log_file = f"{cfg.EvaluationArguments.results_save_path}/{cfg.ModelArguments.checkpoint_path.split(os.sep)[-1].split('.')[0]}_result.txt"
+    prediction_save_file = f"{cfg.EvaluationArguments.results_save_path}/{cfg.ModelArguments.checkpoint_path.split(os.sep)[-1].split('.')[0]}_result.csv"
 
     with torch.no_grad():
-        with open(prediction_log_file, "w") as f_pred:
-            for batch in tqdm(test_loader, desc="Evaluating..."):
-                
-                # Pass through linear layers
-                x = model.custom_linear(batch["features"])
-                output = model.model.generate(inputs_embeds=x, attention_mask=batch["attention_mask"], do_sample=False)
+        for batch in tqdm(test_loader, desc="Evaluating..."):
+            
+            # Pass through linear layers
+            x = model.custom_linear(batch["features"])
+            output = model.model.generate(inputs_embeds=x, attention_mask=batch["attention_mask"], do_sample=False)
 
+            # Decode predictions
+            batch_preds = [tokenizer.decode(o, skip_special_tokens=True) for o in output]
+            
+            # Store results
+            keys.extend(batch["keys"])
+            predictions.extend(batch_preds)
+            if with_labels:
+                references.extend(batch["labels"])  
 
-                # Decode predictions
-                batch_preds = [tokenizer.decode(o, skip_special_tokens=True) for o in output]
-                
-                # Store results
-                predictions.extend(batch_preds)
-                references.extend(batch["labels"])
-
-                # Write batch predictions to file
-                for ref, pred in zip(batch["labels"], batch_preds):
-                    f_pred.write(f"reference_text: {ref}\ngenerated_text: {pred}\n{'-' * 10}\n")
+    if with_labels:
+        df_results = pd.DataFrame({'clip_id': keys, \
+                                'prediction': predictions, 'reference': references})
+    else:
+        df_results = pd.DataFrame({'clip_id': keys, \
+                                'prediction': predictions})
     
+    df_results.to_csv(prediction_save_file, encoding='utf-8')
 
-            result = sacrebleu.compute(predictions=predictions, references=references)
-            result = {
-                    "bleu": result["score"], 
-                    'bleu-1': result['precisions'][0],
-                    'bleu-2': result['precisions'][1],
-                    'bleu-3': result['precisions'][2],
-                    'bleu-4': result['precisions'][3],
-                }
+    if not with_labels:
+        exit(1)
 
-            f_pred.write(f"sacrebleu\n")
-            f_pred.write(f"BLEU score: {result['bleu']}"+"\n")
 
-            f_pred.write(f"BLEU-1: {result['bleu-1']}"+"\n")
-            f_pred.write(f"BLEU-2: {result['bleu-2']}"+"\n")
-            f_pred.write(f"BLEU-3: {result['bleu-3']}"+"\n")
-            f_pred.write(f"BLEU-4: {result['bleu-4']}"+"\n")
+    result = sacrebleu.compute(predictions=predictions, references=references)
+    result = {
+            'bleu-1': result['precisions'][0],
+            'bleu-2': result['precisions'][1],
+            'bleu-3': result['precisions'][2],
+            'bleu-4': result['precisions'][3],
+        }
+            
+    print('='*30)
+    print("sacrebleu")
+    print('-'*10)
+    print(f"BLEU-1: {result['bleu-1']}")
+    print(f"BLEU-2: {result['bleu-2']}")
+    print(f"BLEU-3: {result['bleu-3']}")
+    print(f"BLEU-4: {result['bleu-4']}")
+    print('='*30)
 
 
 if __name__=='__main__':
