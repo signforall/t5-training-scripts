@@ -28,5 +28,6 @@ DatasetArguments:
   language: English
 
 WandbArguments:
+  report_to_wandb: false
   wandb_project: SNL
   wandb_api_key: wandb_api_key
