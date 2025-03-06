@@ -26,11 +26,13 @@ def main():
     EXP_NAME = f"SNL_Model-name_{cfg.ModelArguments.base_model_name}-Weights_{'BASE' if not cfg.ModelArguments.resume else 'SNL_WEIGHTS'}-Language_{cfg.DatasetArguments.language}-seed_{cfg.TrainigArguments.seed}"
 
     # Set environment variables and Wandb
-    os.environ["WANDB_API_KEY"] = cfg.WandbArguments.wandb_api_key
-    wandb.init(
-        project=cfg.WandbArguments.wandb_project,
-        name=EXP_NAME
-    )
+    if cfg.WandbArguments.report_to_wandb:
+        import wandb
+        os.environ["WANDB_API_KEY"] = cfg.WandbArguments.wandb_api_key
+        wandb.init(
+            project=cfg.WandbArguments.wandb_project,
+            name=EXP_NAME
+        )
 
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(cfg.ModelArguments.base_model_hf)
@@ -64,7 +66,7 @@ def main():
         per_device_train_batch_size=cfg.TrainigArguments.batch_size,
         gradient_accumulation_steps=cfg.TrainigArguments.gradient_accumulation_steps,
         num_train_epochs=cfg.TrainigArguments.epochs,
-        report_to="wandb",
+        report_to="wandb" if cfg.WandbArguments.report_to_wandb else "none",
         weight_decay=cfg.TrainigArguments.weight_decay,
         save_strategy="epoch",
         per_device_eval_batch_size=cfg.TrainigArguments.per_device_eval_batch_size,
