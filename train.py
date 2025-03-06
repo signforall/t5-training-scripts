@@ -2,7 +2,6 @@ import os
 import torch
 import numpy as np
 import random
-import wandb
 from transformers import TrainingArguments, Trainer, AutoTokenizer
 from modules.dataset import VideoDataset
 from modules.model import SNLTraslationModel
