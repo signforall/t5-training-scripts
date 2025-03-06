@@ -33,5 +33,5 @@ If you want to fine-tune using the YouTubeASL checkpoint:
    ```bash
    python eval.py --config_path configs/config_eval.yaml
    ```
-### Inference without having the labels
+### Inference Without Labels
 To generate results for a test set without labels, simply leave `test_labels_dataset_path` empty in the evaluation config file.
