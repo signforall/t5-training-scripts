@@ -1,4 +1,4 @@
-# Sign Language Translation
+# Sign Language Translation Using T5
 This repository contains the training and evaluation scripts for training Saudi Sign Language using T5 variations.
 
 ## Pre-requisites
@@ -33,5 +33,5 @@ If you want to fine-tune using the YouTubeASL checkpoint:
    ```bash
    python eval.py --config_path configs/config_eval.yaml
    ```
-### inference without having the labels
+### Inference without having the labels
 To generate results for a test set without labels, simply leave `test_labels_dataset_path` empty in the evaluation config file.
