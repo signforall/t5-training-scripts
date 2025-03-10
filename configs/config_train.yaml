@@ -22,8 +22,8 @@ TrainigArguments:
 DatasetArguments:
   train_dataset_path: 'SSL.keypoints.train_signers_train_sentences.0.h5'
   valid_dataset_path: 'SSL.keypoints.valid_signers_valid_sentences.0.h5'
-  train_labels_dataset_path: 'SSL.keypoints.train_signers_train_sentences.json'
-  valid_labels_dataset_path: 'SSL.keypoints.valid_signers_valid_sentences.json'
+  train_labels_dataset_path: 'SSL.keypoints.train_signers_train_sentences.csv'
+  valid_labels_dataset_path: 'SSL.keypoints.valid_signers_valid_sentences.csv'
   max_sequence_length: 600
   language: English
 
