@@ -82,13 +82,13 @@ def main():
                 references.extend(batch["labels"])  
 
     if with_labels:
-        df_results = pd.DataFrame({'clip_id': keys, \
-                                'prediction': predictions, 'reference': references})
+        df_results = pd.DataFrame({'ID': keys, \
+                                'Translation': predictions, 'Reference': references})
     else:
-        df_results = pd.DataFrame({'clip_id': keys, \
-                                'prediction': predictions})
+        df_results = pd.DataFrame({'ID': keys, \
+                                'Translation': predictions})
     
-    df_results.to_csv(prediction_save_file, encoding='utf-8')
+    df_results.to_csv(prediction_save_file, encoding='utf-8', index=False)
 
     if not with_labels:
         exit(1)
