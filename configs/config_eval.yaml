@@ -7,7 +7,7 @@ ModelArguments:
   
 DatasetArguments:
   test_dataset_path: 'SSL.keypoints.test_signers_test_sentences.0.h5'
-  test_labels_dataset_path: 'SSL.keypoints.test_signers_test_sentences.json'
+  test_labels_dataset_path: 'SSL.annotation.test_signers_test_sentences.csv'
 
 EvaluationArguments:
   results_save_path: "results"
