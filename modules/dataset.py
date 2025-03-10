@@ -1,9 +1,8 @@
 import torch
 from torch.utils.data import Dataset
 import h5py
-import numpy as np
+import pandas as pd
 import torch.nn.functional as F
-import json
 
 class VideoDataset(Dataset):
     def __init__(self, h5_file_path, label_file_path, tokenizer, max_seq_length=600, test_set=False, with_labels=True):
@@ -16,7 +15,7 @@ class VideoDataset(Dataset):
         data_file = self.load_h5_file(h5_file_path)
         
         if self.with_labels:
-            self.sentences = self.load_text_file(label_file_path)
+            self.sentences = self.load_csv_file(label_file_path)
 
         self.data = self.process_data(data_file)
         
@@ -29,8 +28,9 @@ class VideoDataset(Dataset):
         with h5py.File(file_path, 'r') as f:
             return list(self.h5_to_dict(f).values())
 
-    def load_text_file(self, file_path):
-        return json.load(open(file_path, encoding='utf-8'))
+    def load_csv_file(self, file_path):
+        df = pd.read_csv(file_path)
+        return {str(row["ID"]): row["Translation"] for _, row in df.iterrows()}
 
     def process_data(self, data_file):
         processed_data = []
@@ -38,7 +38,7 @@ class VideoDataset(Dataset):
             key = list(item.keys())[0]
             features = torch.tensor(list(item.values())[0], dtype=torch.float32)
             if self.with_labels:
-                sentence = self.sentences[key][key]['translation']
+                sentence = self.sentences[key]
                 processed_data.append([key, features, sentence])
             else:
                 processed_data.append([key, features, None])
