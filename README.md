@@ -26,6 +26,27 @@ If you want to fine-tune using the YouTubeASL checkpoint:
 2. Set `resume` to `true` in `config_train.yaml`.
 3. Specify the checkpoint path in `resume_checkpoint`.
 
+### Reproducing Results  
+
+To reproduce the results mentioned in the paper, set the following hyperparameters as specified:  
+
+#### Model-Specific Hyperparameters  
+
+| Architecture       | Batch Size | Gradient Accumulative Size | Seed (Base Weights) | Seed (Toy) |
+|-------------------|------------|----------------------------|----------------------|------------|
+| T5               | 16         | 1                          | 99                  | 3037          |
+| T5v1.0           | 16         | 1                          | 0                    | 544         |
+| mT5 (English)    | 4          | 4                          | 3037                 | 42          |
+| mT5 (Arabic)     | 4          | 4                          | 99                   | 3037          |
+
+#### Unified Hyperparameters  
+
+| Hyperparameter    | Value  |
+|------------------|--------|
+| Learning Rate    | 0.001  |
+| Weight Decay     | 0.01   |
+| FP16            | False  |
+
 ## Evaluation
 1. Specify the location of the checkpoint in the `config_eval.yaml` file.
 2. Edit the file as needed, and specify the path of the generated results.
