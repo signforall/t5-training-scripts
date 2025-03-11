@@ -46,6 +46,7 @@ To reproduce the results mentioned in the paper, set the following hyperparamete
 | Learning Rate    | 0.001  |
 | Weight Decay     | 0.01   |
 | FP16            | False  |
+| Epochs            | 100  |
 
 ## Evaluation
 1. Specify the location of the checkpoint in the `config_eval.yaml` file.
