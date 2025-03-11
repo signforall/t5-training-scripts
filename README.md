@@ -32,7 +32,7 @@ To reproduce the results mentioned in the paper, set the following hyperparamete
 
 #### Model-Specific Hyperparameters  
 
-| Architecture       | Batch Size | Gradient Accumulative Size | Seed (Base Weights) | Seed (Toy) |
+| Architecture       | Batch Size | Gradient Accumulative Size | Seed (Base Weights) | Seed (YouTubeASL) |
 |-------------------|------------|----------------------------|----------------------|------------|
 | T5               | 16         | 1                          | 99                  | 3037          |
 | T5v1.0           | 16         | 1                          | 0                    | 544         |
