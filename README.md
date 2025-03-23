@@ -12,6 +12,9 @@ Rather than using the same image, you can manually install Python and PyTorch, t
 pip install -r requirements.txt
 ```
 
+## Data Pre-processing
+This [Pose Estimation repository](https://github.com/JSALT2024/PoseEstimation) was used to transform video frames into vector representations.
+
 ## Training
 1. Locate the `config_train.yaml` file in the `configs` folder.
 2. Edit the file as needed, specifying the locations of the training and validation datasets.
