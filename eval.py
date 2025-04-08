@@ -7,7 +7,7 @@ from modules.model import SNLTraslationModel
 from modules.config_loader import load_config
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
-import evaluate
+from sacrebleu.metrics import BLEU
 
 def load_trained_model(cfg):
 
@@ -38,8 +38,8 @@ def main():
     # Load model and tokenizer
     model, tokenizer = load_trained_model(cfg)
 
-    # Load metric
-    sacrebleu = evaluate.load('sacrebleu')
+    # # Load metric
+    # sacrebleu = evaluate.load('sacrebleu')
 
     # Load datasets
     if not os.path.exists(cfg.DatasetArguments.test_labels_dataset_path):
@@ -94,13 +94,26 @@ def main():
         exit(1)
 
 
-    result = sacrebleu.compute(predictions=predictions, references=references)
+    # result = sacrebleu.compute(predictions=predictions, references=references)
+    
+    bleu1 = BLEU(max_ngram_order=1).corpus_score(predictions,  references)
+    bleu2 = BLEU(max_ngram_order=2).corpus_score(predictions,  references)
+    bleu3 = BLEU(max_ngram_order=3).corpus_score(predictions,  references)
+    bleu4 = BLEU(max_ngram_order=4).corpus_score(predictions,  references)
+    
+    # result = {
+    #         'bleu-1': result['precisions'][0],
+    #         'bleu-2': result['precisions'][1],
+    #         'bleu-3': result['precisions'][2],
+    #         'bleu-4': result['precisions'][3],
+    #     }
+
     result = {
-            'bleu-1': result['precisions'][0],
-            'bleu-2': result['precisions'][1],
-            'bleu-3': result['precisions'][2],
-            'bleu-4': result['precisions'][3],
-        }
+        'bleu-1': bleu1,
+        'bleu-2': bleu2,
+        'bleu-3': bleu3,
+        'bleu-4': bleu4,
+    }
             
     print('='*30)
     print("sacrebleu")
